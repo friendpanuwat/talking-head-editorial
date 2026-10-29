@@ -3,7 +3,8 @@
 /* ===================== ENGINE ===================== */
 const ease = p => 1 - Math.pow(1 - p, 3);
 ZOOM.sort((a, b) => a.t - b.t);
-function zoomAt(t) { let z = 1; for (const k of ZOOM) { if (t < k.t) break; z += (k.z - z) * ease(Math.min(1, (t - k.t) / k.d)); } return z; }
+const easeZ = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;   // in-out: the push starts and lands softly
+function zoomAt(t) { let z = 1; for (const k of ZOOM) { if (t < k.t) break; z += (k.z - z) * easeZ(Math.min(1, (t - k.t) / k.d)); } return z * (1.007 + .007 * Math.sin(t * .3)); }   // + slow breathing
 const V = document.getElementById('v');
 window.seek = async (t, src) => {
   if (!window.__fitted) {

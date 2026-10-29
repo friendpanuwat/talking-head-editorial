@@ -14,6 +14,21 @@ PALETTE = {'accent': '#DDFF45', 'navy': '#14213D', 'cream': '#F2EDE2', 'ink': '#
 SLOTS = {'KeySans': 'key_sans', 'KeySerif': 'key_serif', 'Lead': 'lead', 'CardSans': 'card_sans'}
 
 
+def pace_check(timeline):
+    """Warn when the camera breaks the zoom rules (user: zoom too frequent / punchy → slow pushes like talking-head-motion)."""
+    src = re.sub(r'//[^\n]*|/\*.*?\*/', '', timeline, flags=re.S)
+    if re.search(r'\]\)\s*zoom\(', src): print('WARNING pace: zoom list loop found — write each push as zoom(t, z, dur)')
+    pushes = [(float(t), float(z), float(d) if d else 1.2) for t, z, d in
+              re.findall(r'\bzoom\(\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+))?\s*\)', src)]
+    ins = [p for p in pushes if p[1] > 1.001]
+    if len(ins) > 5: print(f'WARNING pace: {len(ins)} zoom push-ins (max 4–5 per clip) — keep only the strongest sentences')
+    for t, z, d in ins:
+        if d < .8: print(f'WARNING pace: zoom({t}, {z}, {d}) is a snap — use dur 1–1.5')
+        if z > 1.08: print(f'WARNING pace: zoom({t}, {z}) — use 1.04–1.06, never above 1.08')
+        near = [u for u, y, _ in ins if 0 < u - t < 4]
+        if near: print(f'WARNING pace: zoom push-ins at {t} and {near[0]} are < 4 s apart')
+
+
 def main():
     args = sys.argv[1:]
     if not args: sys.exit(__doc__)
@@ -23,6 +38,7 @@ def main():
     bp = opt.get('--brand', os.path.join(proj, 'brand.json'))
     if not os.path.exists(bp): bp = os.path.join(ASSETS, 'brand.default.json')
     brand = json.load(open(bp))
+    pace_check(open(tl).read())
     html = open(os.path.join(ASSETS, 'engine_head.html')).read() + '\n' + open(tl).read() + '\n' + open(os.path.join(ASSETS, 'engine_tail.html')).read()
 
     os.makedirs(os.path.join(proj, 'fonts'), exist_ok=True)

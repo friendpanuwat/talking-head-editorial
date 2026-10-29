@@ -59,7 +59,7 @@ function calmSfx(list) {
     .forEach(c => { if (!kept.some(k => Math.abs(k.t - c.t) < SFX_GAP)) kept.push(c); });
   return kept.sort((a, b) => a.t - b.t);
 }
-const zoom = (t, z, d = .001) => ZOOM.push({t, z, d});            // default = hard punch-in cut (editorial style)
+const zoom = (t, z, d = 1.2) => ZOOM.push({t, z, d});             // slow push like talking-head-motion (user: punch-ins felt too frequent)
 const SPRING = 'cubic-bezier(.22,1.3,.36,1)', SMOOTH = 'cubic-bezier(.2,.8,.2,1)', INOUT = 'cubic-bezier(.65,0,.35,1)';
 /* every animation is registered: document.getAnimations() drops finished fill:'none' ones, which breaks backward seeks */
 const A = (el, kf, t, d, o = {}) => { const a = el.animate(kf, {delay: ms(t), duration: ms(d), easing: o.e ?? SMOOTH, fill: o.f ?? 'both', iterations: o.it ?? 1, direction: o.dir ?? 'normal'}); ANIMS.push(a); return a; };

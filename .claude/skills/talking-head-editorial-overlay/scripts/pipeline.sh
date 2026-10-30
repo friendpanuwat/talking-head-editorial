@@ -4,7 +4,7 @@
 #   build   – assemble scene.html from timeline.js + brand.json
 #   preview – stills at T (env PREVIEW="1.5,7.6,...") → <project>/prev/ + contact sheet prev.jpg
 #   render  – all frames, 4 parallel workers
-#   audio   – SFX cues → synth → mix under voice → loudnorm -14 LUFS / -1.5 dBTP
+#   audio   – SFX cues → synth → mix under voice (ducked while speaking) → loudnorm -14 LUFS / -1.5 dBTP
 #   encode  – x264 2-pass ≈3.2 Mbps (≈22 MB / 50 s) + QC sheet qc_sheet.jpg
 #   hq      – high-quality master edit_hq.mp4 (≈8–12 Mbps, kept ≤ 95 MB for GitHub) — deliver with deliver_github.sh
 #   all     – frames build render audio encode
@@ -44,7 +44,7 @@ render() {
 audio() {
   node "$HERE/render.js" "$PROJ" sfx
   (cd "$PROJ" && python3 "$HERE/sfx.py" cues.json sfx_track.wav "$DUR")
-  ffmpeg -y -loglevel error -i "$PROJ/voice.wav" -i "$PROJ/sfx_track.wav" -filter_complex "[1:a]volume=${SFX_DB}dB,aformat=channel_layouts=stereo[s];[0:a][s]amix=inputs=2:normalize=0:duration=first[m]" -map "[m]" "$PROJ/premix.wav"
+  bash "$HERE/mix_sfx.sh" "$PROJ/voice.wav" "$PROJ/sfx_track.wav" "$PROJ/premix.wav" "$SFX_DB"   # SFX ducks under the voice
   J=$(ffmpeg -i "$PROJ/premix.wav" -af loudnorm=I=-14:TP=-1.5:LRA=9:print_format=json -f null - 2>&1 | sed -n '/^{/,/^}/p')
   P=$(echo "$J" | python3 -c "import json,sys;d=json.load(sys.stdin);print(f\"measured_I={d['input_i']}:measured_TP={d['input_tp']}:measured_LRA={d['input_lra']}:measured_thresh={d['input_thresh']}:offset={d['target_offset']}\")")
   ffmpeg -y -loglevel error -i "$PROJ/premix.wav" -af "loudnorm=I=-14:TP=-1.5:LRA=9:$P:linear=true,aresample=48000" -c:a pcm_s16le "$PROJ/master0.wav"

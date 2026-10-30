@@ -91,6 +91,7 @@ description: ตัดต่อคลิปพูดหน้ากล้อง�
 | `scripts/word_timing.sh` | บท + เสียง → chunks.json เวลาระดับคำ (Whisper, มี fallback) |
 | `scripts/fetch_video.sh` · `prep_broll.sh` | ดึงคลิปหลัก · เตรียมคลิป B-roll เป็นเฟรม |
 | `scripts/pipeline.sh` | frames · build · preview · render · audio · encode · hq (`HOLD=` ค้างภาพท้าย) |
+| `scripts/mix_sfx.sh` | วางเสียงประกอบใต้เสียงพูด และหรี่ลงตอนคนพูด (pipeline เรียกเอง — กติกาเดียวกันทุกสกิล) |
 | `scripts/deliver_github.sh` | ส่งไฟล์คุณภาพสูงผ่าน GitHub → ลิงก์ดาวน์โหลด |
 | `assets/engine_*.html` | เอนจิน + ชุดการ์ด + MG kit (ไม่ต้องแก้) |
 | `assets/brand.default.json` | ค่าแบรนด์เริ่มต้น (accent เขียวมะนาว, ฟอนต์ Mitr + Sriracha) |

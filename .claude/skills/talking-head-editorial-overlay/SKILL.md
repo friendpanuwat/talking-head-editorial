@@ -86,6 +86,7 @@ description: ตัดต่อคลิปพูดหน้ากล้อง�
 | `examples/timeline_example.js` | ตัวอย่างระดับงานเต็มคลิป (ไทย 42 วินาที, 14 วิดเจ็ต) — ดูเป็นไอเดีย ห้ามคัดลอกวิดเจ็ต |
 | `scripts/word_timing.sh` | บท + เสียง → chunks.json เวลาระดับคำ (Whisper, มี fallback) |
 | `scripts/pipeline.sh` | frames · build · preview · render · audio · encode · hq (`HOLD=` ค้างภาพท้าย) |
+| `scripts/mix_sfx.sh` | วางเสียงประกอบใต้เสียงพูด และหรี่ลงตอนคนพูด (pipeline เรียกเอง — กติกาเดียวกันทุกสกิล) |
 | `scripts/fetch_video.sh` · `deliver_github.sh` | รับคลิป · ส่งไฟล์คุณภาพสูง |
 | `assets/engine_*.html` | เอนจิน + MG kit + widget (ไม่ต้องแก้) |
 | `assets/brand.default.json` | ค่าแบรนด์เริ่มต้น (accent เขียวมะนาว, Mitr + Sriracha) |
